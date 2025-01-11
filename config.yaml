@@ -1,0 +1,52 @@
+fq_dir: ""
+work_dir: ""
+
+# Input Reads
+dt: "" # datatype = SE or PE
+
+reads:
+  - read1: " "  # Provide read1 file path
+    read2: " "  # Provide read2 file path if PE, else leave empty
+
+#### 上面部分会通过run.sh提供，只用修改下面的部分 ####
+
+# Environment
+conda_env: "base-omics"
+
+Spe: "mm10" # Species: "human" or "mm10" or "mm9"
+
+# Pipeline Configuration Parameters
+trim:
+  params: "--quality 20 --max_n 4 --length 30 --phred33"
+
+bowtie2:
+  params: "-q -N 1 -p 20"
+  index:
+    human: "/public/slst/home/qushy/toolkit/reference_genome/index/Bowtie2/hg38/ucsc_hg38.bowtie2.index"
+    mm10: "/home_data/home/slst/leixy2023/data/database/mm10/bowtie2_index/mm10"
+    mm9: "/public/slst/home/qushy/toolkit/reference_genome/index/Bowtie2/mm9/ucsc_mm9.bowtie2_index"
+
+bamCoverage:
+  binsize: 100
+
+# Effective genome size for deeptools
+deeptools:
+  genome_sizes:
+    hg19: 2864785220
+    hg38: 2913022398
+    mm10: 2652783500
+    mm9: 2620345972
+
+# Number of threads to use
+threads: 20
+
+# Output Directories
+directories:
+  sra_dir: "{work_dir}/sra"
+  fq_dir: "{work_dir}/01_rawdata"
+  trim_out: "{work_dir}/02_cleandata/trim_galore"
+  qc_out: "{work_dir}/03_qc"
+  align_out: "{work_dir}/04_align"
+  dedu_out: "{work_dir}/05_dedu"
+  bw_out: "{work_dir}/06_bw"
+  log_out: "{work_dir}/log"
