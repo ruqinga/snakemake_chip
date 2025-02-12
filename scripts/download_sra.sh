@@ -25,14 +25,13 @@ cd "$metadata_dir" || { echo "Failed to change directory to $metadata_dir"; exit
 awk 'NR > 1 {print $2}' "${metadata}" > sra_list.txt
 
 # Download SRA files
-conda activate base
 iseq -i sra_list.txt -g > iseq.log 2>&1
 
 # Check if files are downloaded
 missing_files=false
 while IFS=$'\t' read -r study_accession run_accession sample_title; do
     # Check for expected files
-    for file in "${run_accession}.fastq.gz" "${run_accession}"_*.fastq.gz; do
+    for file in "${run_accession}"*.fastq.gz; do
         if [ ! -f "$file" ]; then
             echo "File $file not found!"
             missing_files=true
@@ -40,18 +39,12 @@ while IFS=$'\t' read -r study_accession run_accession sample_title; do
     done
 done < "${metadata}"
 
-# Exit if any files are missing
-if $missing_files; then
-    echo "Some files are missing. Please check the log for details."
-    exit 1
-fi
-
 # List files before renaming
-ll -h ./ >> sra_bytes.log
+ls -lh ./ >> sra_bytes.log
 
 # Rename files
 while IFS=$'\t' read -r study_accession run_accession sample_title; do
-    for file in "${run_accession}.fastq.gz" "${run_accession}"_*.fastq.gz; do
+    for file in "${run_accession}"*.fastq.gz; do
         if [ -f "$file" ]; then
             # Rename file
             new_name=$(echo "$file" | sed "s/^${run_accession}/${sample_title}/")
@@ -64,4 +57,4 @@ while IFS=$'\t' read -r study_accession run_accession sample_title; do
 done < "${metadata}"
 
 # List files after renaming
-ll -h ./ >> renamed_bytes.log
+ls -lh ./ >> renamed_bytes.log
