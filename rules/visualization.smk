@@ -22,7 +22,7 @@ rule bam2bed:
     input:
         bam = get_uniq_list
     output:
-        bed="{bw_out}/{sample}_unique_{binsize}.bed"
+        bed="{bw_out}/bed/{sample}_unique_{binsize}.bed"
     conda:
         config["conda_env"]
     group: "processing_group"

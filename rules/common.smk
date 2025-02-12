@@ -58,7 +58,7 @@ def get_all(directories, samples):
         "{dedu_out}/{sample}_mapped_sorted_dedu_uniq.bam",
         "{dedu_out}/{sample}_mapped_sorted_dedu_uniq.bam.bai",
         "{bw_out}/{sample}_unique_{binsize}.bw",
-        "{bw_out}/{sample}_unique_{binsize}.bed"
+        "{bw_out}/bed/{sample}_unique_{binsize}.bed"
     ]
 
     # 根据模式展开所有目标文件路径

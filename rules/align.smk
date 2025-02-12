@@ -2,7 +2,7 @@ rule align_reads_with_bowtie2:
     input:
         read = get_trimmed_list
     output:
-        sam = "{align_out}/{sample}.bowtie2_aln.sorted.sam"
+        sam = temp("{align_out}/{sample}.bowtie2_aln.sorted.sam")
     conda:
         config["conda_env"]
     group: "processing_group"
