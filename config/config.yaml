@@ -1,9 +1,7 @@
 fq_dir: ""
-work_dir: ""
+
 
 # Input Reads
-dt: "" # datatype = SE or PE
-
 reads:
   - read1: " "  # Provide read1 file path
     read2: " "  # Provide read2 file path if PE, else leave empty
@@ -22,8 +20,8 @@ trim:
 bowtie2:
   params: "-q -N 1 -p 20"
   index:
-    human: "/public/slst/home/qushy/toolkit/reference_genome/index/Bowtie2/hg38/ucsc_hg38.bowtie2.index"
-    mm10: "/home_data/home/slst/leixy2023/data/database/mm10/bowtie2_index/mm10"
+    human: "/public/slst/home/zhenghui/guoli/database/index/bowtie2/ucsc/hg38/ucsc_hg38.bowtie2.index"
+    mm10: "/home_data/home/slst/leixy2023/data/database/mm10/index_bowtie2/mm10"
     mm9: "/public/slst/home/qushy/toolkit/reference_genome/index/Bowtie2/mm9/ucsc_mm9.bowtie2_index"
 
 bamCoverage:
@@ -39,14 +37,3 @@ deeptools:
 
 # Number of threads to use
 threads: 20
-
-# Output Directories
-directories:
-  sra_dir: "{work_dir}/sra"
-  fq_dir: "{work_dir}/01_rawdata"
-  trim_out: "{work_dir}/02_cleandata/trim_galore"
-  qc_out: "{work_dir}/03_qc"
-  align_out: "{work_dir}/04_align"
-  dedu_out: "{work_dir}/05_dedu"
-  bw_out: "{work_dir}/06_bw"
-  log_out: "{work_dir}/log"

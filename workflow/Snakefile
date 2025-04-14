@@ -1,0 +1,27 @@
+configfile: "config/config.yaml"
+include: "rules/common.smk"
+
+# 获取全局参数
+# print(f"Config: {config}")
+
+processor = SampleProcessor(config)
+sample_info = processor.sample_info
+samples = processor.sample_names
+
+# 限制生成samtools_flagstat时的suffixes
+SUFFIXES = ["mapped_sorted", "mapped_sorted_dedu", "mapped_sorted_dedu_uniq"]
+
+print(sample_info)
+print(processor.get_all_targets())
+
+
+rule all:
+    input: processor.get_all_targets()
+
+#load rules
+include: "rules/trim.smk"
+include: "rules/qc.smk"
+include: "rules/align.smk"
+include: "rules/dedu.smk"
+include: "rules/visualization.smk"
+include: "rules/summary.smk"
