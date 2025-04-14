@@ -4,13 +4,20 @@ import pandas as pd
 from pathlib import Path
 import sys
 
-# 获取 Snakemake 参数
-trim_logs_dir = Path(snakemake.params.trim_log_dir)
-flagstat_dir = Path(snakemake.params.flagstat_dir)
-align_logs_dir = Path(snakemake.params.align_logs_dir)
-peak_dir = Path(snakemake.params.peak_dir)
+trim_logs_dir = Path("Results/02_trim_out/logs/")
+flagstat_dir = Path("Results/05_dedu/stat/")
+align_logs_dir = Path("Results/04_align/logs/")
+peak_dir = Path("Results/07_peak/narrow_q0.05")
 
-outputfile = Path(snakemake.output.summary)
+outputfile = Path("Results/summary.csv")
+
+# 获取 Snakemake 参数
+# trim_logs_dir = Path(snakemake.params.trim_log_dir)
+# flagstat_dir = Path(snakemake.params.flagstat_dir)
+# align_logs_dir = Path(snakemake.params.align_logs_dir)
+# peak_dir = Path(snakemake.params.peak_dir)
+#
+# outputfile = Path(snakemake.output.summary)
 
 # 设置日志格式
 logging.basicConfig(level=logging.WARNING, format="%(levelname)s: %(message)s")
@@ -82,8 +89,7 @@ def count_lines(file_path):
         lines = file.readlines()
 
     if len(lines) == 0:
-        logging.error(f"{file_path} 没有找到peak")
-        sys.exit(1)
+        logging.warning(f"{file_path} 没有找到peak")
 
     return len(lines)
 
@@ -98,6 +104,7 @@ def main():
     uniq_reads_dict = {}
     uniq_ratio_dict = {}
     peaknum_dic = {}
+
 
     # 1. trim log
     for log_file in trim_logs_dir.glob("*.log"):
@@ -133,7 +140,7 @@ def main():
 
     # 4. peak number
     for peakfile in peak_dir.glob("*_npks.bed"):
-        sample = re.sub(r"(_se_|_pe_)?npks\.bed$", "", peakfile.stem)
+        sample = re.sub(r"(_se|_pe)_npks$", "", peakfile.stem)
         peak_number = count_lines(peakfile)
 
         peaknum_dic[sample] = peak_number
