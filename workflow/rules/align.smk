@@ -40,7 +40,8 @@ rule align_reads_with_bowtie2_human_pe:
     input:
         read = get_trimmed_list
     output:
-        sam = temp("Results/04_align/{sample}_human_pe.bowtie2_aln.sorted.sam")
+        sam = temp("Results/04_align/{sample}_human_pe.bowtie2_aln.sorted.sam"),
+        log= "Results/04_align/logs/{sample}_human.log"
     conda:
         config["conda_env"]
     group: "processing_group"
@@ -59,7 +60,8 @@ rule align_reads_with_bowtie2_human_se:
     input:
         read = get_trimmed_list
     output:
-        sam = temp("Results/04_align/{sample}_human_se.bowtie2_aln.sorted.sam")
+        sam = temp("Results/04_align/{sample}_human_se.bowtie2_aln.sorted.sam"),
+        log= "Results/04_align/logs/{sample}_human.log"
     conda:
         config["conda_env"]
     group: "processing_group"

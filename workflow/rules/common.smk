@@ -11,6 +11,7 @@ class SampleProcessor:
         self.sample_names = []
         self.sample_info = {}
         self.binsize = config.get("bamCoverage", {}).get("binsize", 100)
+        self.q_threshold = config.get("MACS", {}).get("q_threshold", 0.05)
         self.process_reads()
 
     def process_reads(self):
@@ -40,7 +41,7 @@ class SampleProcessor:
         """
         return "1_val_1" if self.sample_info[sample] == "PE" else "trimmed"
 
-    def generate_targets(self, sample, binsize):
+    def generate_targets(self, sample, binsize,q_threshold):
         """
         生成给定样本的所有目标文件路径。
 
@@ -57,12 +58,12 @@ class SampleProcessor:
             f"Results/02_trim_out/{sample}_{self.get_trim_ext(sample)}.fq.gz",
             f"Results/03_qc/rawdata/multiqc_report.html",
             f"Results/03_qc/cleandata/multiqc_report.html",
-            f"Results/04_align/{sample}_{dt}.bowtie2_aln.sorted.sam",
-            f"Results/04_align/{sample}_human_{dt}.bowtie2_aln.sorted.sam",
+            f"Results/04_align/logs/{sample}_human.log",
             f"Results/05_dedu/{sample}_mapped_sorted_dedu_uniq.bam",
             *[f"Results/05_dedu/stat/{sample}_{s}.flagstat" for s in suffixes],
             f"Results/06_visualization/{sample}_unique_{binsize}.bw",
             f"Results/06_visualization/bed/{sample}_unique_{binsize}.bed",
+            f"Results/07_peak/narrow_q{q_threshold}/{sample}_{dt}_peaks.narrowPeak",
             f"Results/summary.csv"
         ]
 
@@ -75,7 +76,7 @@ class SampleProcessor:
         """
         all_paths = []
         for sample in self.sample_names:
-            paths = self.generate_targets(sample, self.binsize)
+            paths = self.generate_targets(sample, self.binsize,self.q_threshold)
             all_paths.extend(paths)
         return all_paths
 
