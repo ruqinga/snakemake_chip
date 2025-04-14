@@ -58,7 +58,7 @@ class SampleProcessor:
             f"Results/02_trim_out/{sample}_{self.get_trim_ext(sample)}.fq.gz",
             f"Results/03_qc/rawdata/multiqc_report.html",
             f"Results/03_qc/cleandata/multiqc_report.html",
-            f"Results/04_align/logs/{sample}_human.log",
+            f"Results/04_align/logs/{sample}_human_{dt}.log",
             f"Results/05_dedu/{sample}_mapped_sorted_dedu_uniq.bam",
             *[f"Results/05_dedu/stat/{sample}_{s}.flagstat" for s in suffixes],
             f"Results/06_visualization/{sample}_unique_{binsize}.bw",

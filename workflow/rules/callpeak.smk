@@ -39,3 +39,14 @@ rule callpeak_se:
             -t {input.bam} -g {params.gsize} -n {wildcards.sample}_se \
             --outdir {params.outdir} > {log.log} 2>&1
         """
+
+rule extract_peak_pos:
+    input: peak = "Results/07_peak/narrow_q{q_threshold}/{sample}_{dt}_peaks.narrowPeak"
+    output:
+        peak_pos = "Results/07_peak/narrow_q{q_threshold}/{sample}_{dt}_npks.bed"
+    group: "processing_group"
+    shell:
+        """
+        # 提取前三列（peak的坐标信息）
+        cut -f 1-3 {input.peak} | sort -k1,1 -k2,2n > {output.peak_pos}
+        """

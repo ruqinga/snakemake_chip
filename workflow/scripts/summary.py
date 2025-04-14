@@ -8,6 +8,7 @@ import sys
 trim_logs_dir = Path(snakemake.params.trim_log_dir)
 flagstat_dir = Path(snakemake.params.flagstat_dir)
 align_logs_dir = Path(snakemake.params.align_logs_dir)
+peak_dir = Path(snakemake.params.peak_dir)
 
 outputfile = Path(snakemake.output.summary)
 
@@ -76,6 +77,16 @@ def extract_from_flagstat(flagstat):
 
     return int(dedu.group(1))
 
+def count_lines(file_path):
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+
+    if len(lines) == 0:
+        logging.error(f"{file_path} 没有找到peak")
+        sys.exit(1)
+
+    return len(lines)
+
 def main():
     raw_reads_dict = {}
     clean_reads_dict = {}
@@ -86,6 +97,7 @@ def main():
     dedu_ratio_dict = {}
     uniq_reads_dict = {}
     uniq_ratio_dict = {}
+    peaknum_dic = {}
 
     # 1. trim log
     for log_file in trim_logs_dir.glob("*.log"):
@@ -119,6 +131,13 @@ def main():
         aligned_reads = extract_from_align_log(log_file)
         mapping_rate_dict_human[sample] = aligned_reads / clean_reads_dict.get(sample, 1)
 
+    # 4. peak number
+    for peakfile in peak_dir.glob("*_npks.bed"):
+        sample = re.sub(r"(_se_|_pe_)?npks\.bed$", "", peakfile.stem)
+        peak_number = count_lines(peakfile)
+
+        peaknum_dic[sample] = peak_number
+
     # 6. 构建 DataFrame
     df = pd.DataFrame({
         "raw_reads": raw_reads_dict,
@@ -129,11 +148,12 @@ def main():
         "dedu_reads": dedu_reads_dict,
         "dedu_ratio": dedu_ratio_dict,
         "uniq_reads": uniq_reads_dict,
-        "uniq_ratio": uniq_ratio_dict
+        "uniq_ratio": uniq_ratio_dict,
+        "peaknum": peaknum_dic
     }).reset_index().rename(columns={"index": "filename"})
 
     # 格式化：整数列与浮点列分别处理
-    int_cols = ["raw_reads", "clean_reads", "mapped_reads", "dedu_reads", "uniq_reads"]
+    int_cols = ["raw_reads", "clean_reads", "mapped_reads", "dedu_reads", "uniq_reads","peaknum"]
     float_cols = ["mapping_rate", "mapping_rate_human", "dedu_ratio", "uniq_ratio"]
 
     for col in int_cols:
