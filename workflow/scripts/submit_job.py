@@ -35,7 +35,7 @@ def load_config(config_file):
 def extract_sample_value(input_string):
     if input_string is None:
         return None
-    match = re.search(r'sample=(\w+)', input_string)
+    match = re.search(r'sample=([\w\.\-_]+)', input_string)
     if match:
         return match.group(1)
     else:
