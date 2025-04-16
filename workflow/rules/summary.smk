@@ -6,7 +6,7 @@ rule summary:
             for sample in samples
         ]
     output:
-        summary = "Results/summary.csv"
+        summary = "Results/summary.txt"
     params:
         trim_log_dir="Results/02_trim_out/logs/",
         flagstat_dir="Results/05_dedu/stat/",

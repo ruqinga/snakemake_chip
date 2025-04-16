@@ -104,7 +104,7 @@ snakemake \
     --latency-wait 60 \
     --jobs 5 \
     --use-conda \
-    --groups processing_group=7 global_process=6 \
+    --groups processing_group=20 global_process=10 \
     --config fq_dir="$fq_dir" reads="$json_output"
 #--sample {wildcards.sample}
 

@@ -4,20 +4,20 @@ import pandas as pd
 from pathlib import Path
 import sys
 
-trim_logs_dir = Path("Results/02_trim_out/logs/")
-flagstat_dir = Path("Results/05_dedu/stat/")
-align_logs_dir = Path("Results/04_align/logs/")
-peak_dir = Path("Results/07_peak/narrow_q0.05")
-
-outputfile = Path("Results/summary.csv")
+# trim_logs_dir = Path("Results/02_trim_out/logs/")
+# flagstat_dir = Path("Results/05_dedu/stat/")
+# align_logs_dir = Path("Results/04_align/logs/")
+# peak_dir = Path("Results/07_peak/narrow_q0.05")
+#
+# outputfile = Path("Results/summary.txt")
 
 # 获取 Snakemake 参数
-# trim_logs_dir = Path(snakemake.params.trim_log_dir)
-# flagstat_dir = Path(snakemake.params.flagstat_dir)
-# align_logs_dir = Path(snakemake.params.align_logs_dir)
-# peak_dir = Path(snakemake.params.peak_dir)
-#
-# outputfile = Path(snakemake.output.summary)
+trim_logs_dir = Path(snakemake.params.trim_log_dir)
+flagstat_dir = Path(snakemake.params.flagstat_dir)
+align_logs_dir = Path(snakemake.params.align_logs_dir)
+peak_dir = Path(snakemake.params.peak_dir)
+
+outputfile = Path(snakemake.output.summary)
 
 # 设置日志格式
 logging.basicConfig(level=logging.WARNING, format="%(levelname)s: %(message)s")
@@ -76,7 +76,7 @@ def extract_from_flagstat(flagstat):
     with open(flagstat, 'r') as f:
         content = f.read()
 
-    dedu = re.search(r"(\d+)\s+\+\s+\d+\s+in total", content)
+    dedu = re.search(r"(\d+)\s+\+\s+\d+\s+read1", content)
 
     if not dedu:
         logging.error(f"{flagstat} 缺失配对相关字段")
@@ -100,7 +100,7 @@ def main():
     mapping_rate_dict = {}
     mapping_rate_dict_human = {}
     dedu_reads_dict = {}
-    dedu_ratio_dict = {}
+    duplicates_rate_dict = {}
     uniq_reads_dict = {}
     uniq_ratio_dict = {}
     peaknum_dic = {}
@@ -124,7 +124,7 @@ def main():
         sample = re.sub(r"_mapped_sorted_dedu\.flagstat$", "", log_file.name)
         dedu = extract_from_flagstat(log_file)
         dedu_reads_dict[sample] = dedu
-        dedu_ratio_dict[sample] = dedu / mapped_reads_dict.get(sample, 1)
+        duplicates_rate_dict[sample] =(mapped_reads_dict.get(sample, 1) - dedu) / mapped_reads_dict.get(sample, 1)
 
     for log_file in flagstat_dir.glob("*_mapped_sorted_dedu_uniq.flagstat"):
         sample = re.sub(r"_mapped_sorted_dedu_uniq\.flagstat$", "", log_file.name)
@@ -133,8 +133,9 @@ def main():
         uniq_ratio_dict[sample] = uniq / dedu_reads_dict.get(sample, 1)
 
     # 3. align log of human
-    for log_file in align_logs_dir.glob("*_human.log"):
-        sample = re.sub(r"_human\.log$", "", log_file.name)
+    for log_file in align_logs_dir.glob("*_human*.log"):
+        sample = re.sub(r"_human(_se|_pe)\.log$", "", log_file.name)
+        #print(log_file.name)
         aligned_reads = extract_from_align_log(log_file)
         mapping_rate_dict_human[sample] = aligned_reads / clean_reads_dict.get(sample, 1)
 
@@ -150,18 +151,18 @@ def main():
         "raw_reads": raw_reads_dict,
         "clean_reads": clean_reads_dict,
         "mapped_reads": mapped_reads_dict,
-        "mapping_rate": mapping_rate_dict,
-        "mapping_rate_human": mapping_rate_dict_human,
+        "mapped_rate": mapping_rate_dict,
+        "mapped_rate_human": mapping_rate_dict_human,
         "dedu_reads": dedu_reads_dict,
-        "dedu_ratio": dedu_ratio_dict,
+        "duplicates_rate": duplicates_rate_dict,
         "uniq_reads": uniq_reads_dict,
         "uniq_ratio": uniq_ratio_dict,
         "peaknum": peaknum_dic
     }).reset_index().rename(columns={"index": "filename"})
 
     # 格式化：整数列与浮点列分别处理
-    int_cols = ["raw_reads", "clean_reads", "mapped_reads", "dedu_reads", "uniq_reads","peaknum"]
-    float_cols = ["mapping_rate", "mapping_rate_human", "dedu_ratio", "uniq_ratio"]
+    int_cols = ["raw_reads", "clean_reads", "mapped_reads", "dedu_reads", "uniq_reads", "peaknum"]
+    float_cols = ["mapped_rate", "mapped_rate_human", "duplicates_rate", "uniq_ratio"]
 
     for col in int_cols:
         if col in df.columns:

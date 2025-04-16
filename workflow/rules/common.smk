@@ -64,7 +64,7 @@ class SampleProcessor:
             f"Results/06_visualization/{sample}_unique_{binsize}.bw",
             f"Results/06_visualization/bed/{sample}_unique_{binsize}.bed",
             f"Results/07_peak/narrow_q{q_threshold}/{sample}_{dt}_peaks.narrowPeak",
-            f"Results/summary.csv"
+            f"Results/summary.txt"
         ]
 
     def get_all_targets(self):
