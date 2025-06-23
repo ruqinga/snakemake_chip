@@ -2,6 +2,10 @@
 todo list:
 - 对log文件夹加上保护，避免在删除整个文件夹时被删除
 
+用法: bash run.sh <fq_dir> -y
+- <fq_dir> 为fastq.gz文件的存放目录，单双端以 _1.fastq.gz _2.fastq.gz 区分
+- -y 表示实际运行，否则只会打印出要运行的命令
+
 单独提交某个任务
 ```shell
 fq_dir="../rawdata"
