@@ -29,8 +29,11 @@ bamCoverage:
   binsize: 100
 
 MACS:
-  params: "--nomodel --extsize 200 --min-length 100 -B"
-  q_threshold: 0.05
+  params: "--nomodel --nolambda --extsize 200 --min-length 100 -B"
+  q_threshold: 0.01
+
+find_motif:
+  params: " " #"-size 200 -len 12,14,16"
 
 # Effective genome size for deeptools
 deeptools:

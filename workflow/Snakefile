@@ -12,7 +12,7 @@ samples = processor.sample_names
 SUFFIXES = ["mapped_sorted", "mapped_sorted_dedu", "mapped_sorted_dedu_uniq"]
 
 print(sample_info)
-print(processor.get_all_targets())
+#print(processor.get_all_targets())
 
 
 rule all:
@@ -25,4 +25,5 @@ include: "rules/align.smk"
 include: "rules/dedu.smk"
 include: "rules/visualization.smk"
 include: "rules/callpeak.smk"
+include: "rules/call_motif.smk"
 include: "rules/summary.smk"

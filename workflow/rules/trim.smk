@@ -10,7 +10,6 @@ rule trim_pe:
         ]
     conda:
         config["conda_env"]
-    group: "processing_group"
     params:
         rawdata = os.path.abspath(config["fq_dir"]),  # 将相对路径转换为绝对路径
         option = config["trim"]["params"],
@@ -32,7 +31,6 @@ rule trim_se:
         trimmed_read = "Results/02_trim_out/{sample}_trimmed.fq.gz"
     conda:
         config["conda_env"]
-    group: "processing_group"
     params:
         rawdata = os.path.abspath(config["fq_dir"]),  # 将相对路径转换为绝对路径
         option = config["trim"]["params"],

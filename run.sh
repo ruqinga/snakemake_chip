@@ -55,7 +55,10 @@ json_output_pe=$(IFS=,; echo "[${json_array_pe[*]}]")
 json_output_se=$(IFS=,; echo "[${json_array_se[*]}]")
 json_output=$(IFS=,; echo "[${json_array[*]}]")
 
-#echo "$json_output"
+# 保存 json_output 到文件
+json_output_file="$fq_dir/reads_json.json"
+echo "$json_output" > "$json_output_file"
+echo "save input reads information to $json_output_file"
 
 # 检查 JSON 数据是否为空并输出相应的提示信息
 if [[ -z "$json_output_se" || "$json_output_se" == "[]" ]]; then
@@ -104,7 +107,6 @@ snakemake \
     --latency-wait 60 \
     --jobs 5 \
     --use-conda \
-    --groups processing_group=20 global_process=10 \
     --config fq_dir="$fq_dir" reads="$json_output"
 #--sample {wildcards.sample}
 

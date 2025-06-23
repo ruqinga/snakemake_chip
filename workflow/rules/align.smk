@@ -5,7 +5,6 @@ rule align_reads_with_bowtie2_pe:
         sam = temp("Results/04_align/{sample}_pe.bowtie2_aln.sorted.sam")
     conda:
         config["conda_env"]
-    group: "processing_group"
     params:
         option = config["bowtie2"]["params"],
         index= config["bowtie2"]["index"][config["Spe"]],
@@ -24,7 +23,6 @@ rule align_reads_with_bowtie2_se:
         sam = temp("Results/04_align/{sample}_se.bowtie2_aln.sorted.sam")
     conda:
         config["conda_env"]
-    group: "processing_group"
     params:
         option = config["bowtie2"]["params"],
         index= config["bowtie2"]["index"][config["Spe"]],
@@ -44,7 +42,6 @@ rule align_reads_with_bowtie2_human_pe:
         log= "Results/04_align/logs/{sample}_human_pe.log"
     conda:
         config["conda_env"]
-    group: "processing_group"
     params:
         option = config["bowtie2"]["params"],
         index= config["bowtie2"]["index"]["human"],
@@ -64,7 +61,6 @@ rule align_reads_with_bowtie2_human_se:
         log= "Results/04_align/logs/{sample}_human_se.log"
     conda:
         config["conda_env"]
-    group: "processing_group"
     params:
         option = config["bowtie2"]["params"],
         index= config["bowtie2"]["index"]["human"],

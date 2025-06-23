@@ -9,7 +9,6 @@ rule dedu_and_uniq:
         uniq_bam_bai = "Results/05_dedu/{sample}_mapped_sorted_dedu_uniq.bam.bai"
     conda:
         config["conda_env"]
-    group: "processing_group"
     params:
         thread = config["threads"]
     log:
@@ -37,7 +36,6 @@ rule samtools_flagstat:
         flagstat="Results/05_dedu/stat/{sample}_{suffix}.flagstat"
     conda:
         config["conda_env"]
-    group: "processing_group"
     wildcard_constraints:
         suffix="|".join(SUFFIXES)
     shell:

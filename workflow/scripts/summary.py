@@ -76,13 +76,14 @@ def extract_from_flagstat(flagstat):
     with open(flagstat, 'r') as f:
         content = f.read()
 
-    dedu = re.search(r"(\d+)\s+\+\s+\d+\s+read1", content)
+    reads = re.search(r"(\d+)\s+\+\s+\d+\s+in total (QC-passed reads + QC-failed reads)", content)
+    #  samtools view -c CT_3CHA09-HA_mapped_sorted_dedu_uniq.bam
 
-    if not dedu:
+    if not reads:
         logging.error(f"{flagstat} 缺失配对相关字段")
         sys.exit(1)
 
-    return int(dedu.group(1))
+    return int(reads.group(1))
 
 def count_lines(file_path):
     with open(file_path, 'r') as file:
@@ -118,12 +119,14 @@ def main():
         sample = re.sub(r"_mapped_sorted\.flagstat$", "", log_file.name)
         mapped = extract_from_flagstat(log_file)
         mapped_reads_dict[sample] = mapped
+        print(f"Sample: {sample}, Mapped Reads: {mapped}")
         mapping_rate_dict[sample] = mapped / clean_reads_dict.get(sample, 1)
 
     for log_file in flagstat_dir.glob("*_mapped_sorted_dedu.flagstat"):
         sample = re.sub(r"_mapped_sorted_dedu\.flagstat$", "", log_file.name)
         dedu = extract_from_flagstat(log_file)
         dedu_reads_dict[sample] = dedu
+        print(f"Sample: {sample}, dedu Reads: {mapped}")
         duplicates_rate_dict[sample] =(mapped_reads_dict.get(sample, 1) - dedu) / mapped_reads_dict.get(sample, 1)
 
     for log_file in flagstat_dir.glob("*_mapped_sorted_dedu_uniq.flagstat"):
@@ -174,6 +177,7 @@ def main():
 
     # 输出结果
     df.to_csv(outputfile, sep='\t', index=False, encoding='utf-8')
+    print("Wrote summary file to {}".format(outputfile))
 
 
 if __name__ == "__main__":
