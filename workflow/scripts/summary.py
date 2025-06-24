@@ -7,7 +7,7 @@ import sys
 # trim_logs_dir = Path("Results/02_trim_out/logs/")
 # flagstat_dir = Path("Results/05_dedu/stat/")
 # align_logs_dir = Path("Results/04_align/logs/")
-# peak_dir = Path("Results/07_peak/narrow_q0.05")
+# peak_dir = Path("Results/07_peak/narrow_q0.01")
 #
 # outputfile = Path("Results/summary.txt")
 
@@ -76,7 +76,7 @@ def extract_from_flagstat(flagstat):
     with open(flagstat, 'r') as f:
         content = f.read()
 
-    reads = re.search(r"(\d+)\s+\+\s+\d+\s+in total (QC-passed reads + QC-failed reads)", content)
+    reads = re.search(r"(\d+)\s+\+\s+\d+\s+in total", content)
     #  samtools view -c CT_3CHA09-HA_mapped_sorted_dedu_uniq.bam
 
     if not reads:
@@ -119,14 +119,14 @@ def main():
         sample = re.sub(r"_mapped_sorted\.flagstat$", "", log_file.name)
         mapped = extract_from_flagstat(log_file)
         mapped_reads_dict[sample] = mapped
-        print(f"Sample: {sample}, Mapped Reads: {mapped}")
+        #print(f"Sample: {sample}, Mapped Reads: {mapped}")
         mapping_rate_dict[sample] = mapped / clean_reads_dict.get(sample, 1)
 
     for log_file in flagstat_dir.glob("*_mapped_sorted_dedu.flagstat"):
         sample = re.sub(r"_mapped_sorted_dedu\.flagstat$", "", log_file.name)
         dedu = extract_from_flagstat(log_file)
         dedu_reads_dict[sample] = dedu
-        print(f"Sample: {sample}, dedu Reads: {mapped}")
+        #print(f"Sample: {sample}, dedu Reads: {mapped}")
         duplicates_rate_dict[sample] =(mapped_reads_dict.get(sample, 1) - dedu) / mapped_reads_dict.get(sample, 1)
 
     for log_file in flagstat_dir.glob("*_mapped_sorted_dedu_uniq.flagstat"):
